@@ -1,0 +1,18 @@
+# Raw data files
+data/
+
+# LaTeX artifacts
+*.log
+*.aux
+*.out
+*.tex
+
+# R environment
+.Rproj.user
+.Rhistory
+.RData
+.renv
+renv/
+
+# OS
+.DS_Store
