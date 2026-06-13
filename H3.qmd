@@ -1,32 +1,27 @@
 ---
 title: "FINARTS HW 3 — Market Model Regression"
-subtitle: "Group 4 — Sison, Aaron Joshua E.; Opiana, Aimee Lorynne A.; Galedo, Enrique Lorenzo; Patajo, Juliana; Go, Keira; Cuenca, Raphael"
-date: "June 2026"
+author: "`Group 4 \\\\ Cuenca, Raphael \\\\ Galedo, Enrique Lorenzo \\\\ Go, Keira \\\\ Opiana, Aimee Lorynne A. \\\\ Patajo, Juliana \\\\ Sison, Aaron Joshua E.`{=latex}"
+date: "June 16, 2026"
 format:
   pdf:
     toc: true
     number-sections: true
     pdf-engine: pdflatex
-    pdf-version: "1.4"
-    include-in-header:
-      text: |
-        \pdfobjcompresslevel=0
-        \pdfminorversion=4
+    colorlinks: true
+    geometry: "margin=1in"
 editor: source
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = "")
+options(scipen = 999) # Disable scientific notation for clearer output
 ```
+
+\newpage
 
 # Overview
 
 **Model:** $$R_i = \beta_0 + \beta_1 \cdot R_m + u$$
-
-**Data files:**
-- `Company_Returns.xlsx` — Daily returns of all active PSE-listed companies (Jan 1, 2023 – Jan 23, 2026), long format
-- `PSEi_Return.xlsx` — Daily returns of the PSE index (Jan 1, 2023 – Jan 29, 2025)
-- `Company Name.xlsx` — Company details (name, RIC, sector)
 
 **Selected stocks (5 sectors):**
 
@@ -50,26 +45,17 @@ library(broom)
 
 set.seed(42L)
 
-company_returns <- read_excel("data/Company_Returns.xlsx")
-psei_return    <- read_excel("data/PSEi_Return.xlsx")
-company_info   <- read_excel("data/Company Name.xlsx")
+company_returns <- read_excel("data/raw/Company_Returns.xlsx")
+psei_return     <- read_excel("data/raw/PSEi_Return.xlsx")
+company_info    <- read_excel("data/raw/Company Name.xlsx")
 
-cat("DATA LOADED\n")
-cat("Company_Returns:", nrow(company_returns), "rows\n")
-cat("PSEi_Return:",    nrow(psei_return),    "rows\n")
-cat("Company Info:",   nrow(company_info),   "rows\n\n")
-```
-
-```{r stocks}
 selected_rics <- c("BPI.PS", "CNPF.PS", "MER.PS", "ABS.PS", "TEL.PS")
 
 stock_meta <- company_info |>
   filter(RIC %in% selected_rics) |>
-  select(RIC, Name = Name, Sector, Full_Name = `Full Name`)
+  select(RIC, Name, Sector, Full_Name = `Full Name`)
 
-cat("SELECTED STOCKS\n")
-print(stock_meta, row.names = FALSE)
-cat("\n")
+knitr::kable(stock_meta, caption = "Selected Stocks Metadata")
 ```
 
 ---
@@ -79,8 +65,6 @@ cat("\n")
 **Instruction:** Select 5 stocks from 5 different sectors. Run a regression of the returns of each stock against the market returns.
 
 $$R_i = \beta_0 + \beta_1 \cdot R_m + u$$
-
----
 
 ## Question 1 (2 pts)
 
@@ -100,46 +84,27 @@ stock_returns <- company_returns |>
 reg_data_long <- stock_returns |>
   inner_join(psei, by = "Date")
 
-cat("REGRESSION DATA (long format)\n")
-cat("Rows:", nrow(reg_data_long), "\n")
-cat("Date range:", format(min(reg_data_long$Date), "%Y-%m-%d"),
-    "to", format(max(reg_data_long$Date), "%Y-%m-%d"), "\n\n")
-```
-
-```{r q1-wide}
 reg_data_wide <- reg_data_long |>
   select(Date, RIC, Return, PSEi_Return) |>
   pivot_wider(
-    id_cols     = c(Date, PSEi_Return),
-    names_from  = RIC,
-    values_from = Return,
+    id_cols      = c(Date, PSEi_Return),
+    names_from   = RIC,
+    values_from  = Return,
     names_prefix = ""
   ) |>
-  mutate(across(all_of(selected_rics), ~ as.numeric(.)))
+  mutate(across(all_of(selected_rics), as.numeric)) |>
+  arrange(desc(Date))
 
-stopifnot(all(sapply(reg_data_wide[selected_rics], is.numeric)))
-
-cat("REGRESSION DATAFRAME (wide format)\n")
-cat("Dimensions:", nrow(reg_data_wide), "rows x", ncol(reg_data_wide), "cols\n")
-cat("Columns:", colnames(reg_data_wide), "\n")
-cat("First 5 rows shown below.\n\n")
+# Displaying the first 5 rows of the generated regression dataframe
+knitr::kable(head(reg_data_wide, 5), digits = 4, 
+             caption = "Preview of the Regression Dataframe")
 ```
 
 ---
 
 ## Question 2 (2 pts each, 10 pts total)
 
-> Run the regressions and report your estimated parameters. Follow this format when reporting:
-
-> ```
-> STOCK 1
-> RIC: XX
-> Company Name: XX
-> Sector: XX
-> Estimated parameters:
-> B0: XX (indicate significance with asterisks)
-> B1: XX (indicate significance with asterisks)
-> ```
+> Run the regressions and report your estimated parameters. 
 
 ```{r q2-regressions}
 stock_names <- list(
@@ -168,46 +133,26 @@ sig_stars <- function(p_value) {
 
 regression_results <- list()
 
-cat("REGRESSION RESULTS\n")
-cat("Model: R_i = B0 + B1 * R_m + u\n\n")
-
 for (ric in selected_rics) {
   stock_data <- reg_data_long |> filter(RIC == ric)
   model <- lm(Return ~ PSEi_Return, data = stock_data)
   regression_results[[ric]] <- model
-
+  
   coef_summary <- summary(model)$coefficients
-  b0_est    <- coef_summary[1, 1]
-  b1_est    <- coef_summary[2, 1]
-  b0_pval   <- coef_summary[1, 4]
-  b1_pval   <- coef_summary[2, 4]
-  b0_sig    <- sig_stars(b0_pval)
-  b1_sig    <- sig_stars(b1_pval)
-  r_squared <- summary(model)$r.squared
-  n_obs     <- nobs(model)
+  b0_est <- coef_summary[1, 1]; b0_pval <- coef_summary[1, 4]
+  b1_est <- coef_summary[2, 1]; b1_pval <- coef_summary[2, 4]
 
-  cat("STOCK:", which(selected_rics == ric), "\n")
+  cat("STOCK", which(selected_rics == ric), "\n")
   cat("RIC:", ric, "\n")
   cat("Company Name:", stock_names[[ric]], "\n")
   cat("Sector:", stock_sectors[[ric]], "\n")
   cat("Estimated parameters:\n")
-  cat("B0:", sprintf("%.6f%s", b0_est, b0_sig), "\n")
-  cat("B1:", sprintf("%.6f%s", b1_est, b1_sig), "\n")
-  cat("R-squared:", sprintf("%.4f", r_squared), "\n")
-  cat("Observations:", n_obs, "\n\n")
+  cat("B0:", sprintf("%.6f", b0_est), sig_stars(b0_pval), "\n")
+  cat("B1:", sprintf("%.6f", b1_est), sig_stars(b1_pval), "\n\n")
 }
 ```
 
-### Detailed Output Per Stock
-
-```{r q2-detail}
-cat("DETAILED MODEL SUMMARIES\n\n")
-for (ric in selected_rics) {
-  cat("\n", ric, "\n")
-  print(summary(regression_results[[ric]]))
-  cat("\n")
-}
-```
+*(Note on significance: *** $p<0.01$, ** $p<0.05$, * $p<0.10$)*
 
 ---
 
@@ -215,63 +160,49 @@ for (ric in selected_rics) {
 
 > Discuss your findings. Discuss the results for each stock, and compare the estimated parameters for each of the stocks.
 
-**Per-stock analysis:**
+The empirical estimation of the market model across the five selected equities reveals a pervasive lack of statistical significance at the standard 5% threshold ($p > 0.05$ for all $\beta_1$ coefficients). For the timeframe evaluated (2023–2025), the systematic market movements dictated by the PSEi failed to meaningfully explain the daily variance of these specific stocks, a finding corroborated by near-zero $R^2$ values across the panel. Consequently, the daily returns of these selected equities appear to be driven predominantly by idiosyncratic, company-specific factors rather than broader macroeconomic market trends.
 
-Century Pacific Food (CNPF.PS) is the only stock with a negative beta value. A 1% increase in the PSEi leads to a 0.029% decrease in Century Pacific's return. This suggests a defensive characteristic, though the relationship is not statistically significant.
+Despite the overarching statistical insignificance, examining the individual slope coefficients provides insight into the directional sensitivities of the equities. PLDT (TEL.PS) registers the highest market sensitivity among the cohort with a beta of $0.0659$, emerging as the only stock to approach marginal significance at the 10% level ($p = 0.083$). This suggests it tracks the broader index slightly more closely than its peers. Similarly, Manila Electric (MER.PS) yields a positive beta ($0.0338$) coupled with a marginally significant positive alpha ($\beta_0 = 0.1210$, $p < 0.10$), hinting at slight positive excess returns generated independently of the market. Both the Bank of the Philippine Islands (BPI.PS) and ABS-CBN (ABS.PS) exhibit very weak positive betas ($0.0145$ and $0.0240$, respectively) alongside high p-values, confirming that market fluctuations barely permeate their return profiles.
 
-**Cross-stock comparison:**
-
-Every stock's p-value is greater than 0.05, meaning the results are statistically insignificant. This indicates there is no correlation between our chosen stocks' returns and the PSEi returns from 2023 to 2025. Similarly, the R-squared results for each stock are close to zero, implying the PSEi returns only explain a tiny portion of the variance of price movements for each stock.
+In contrast to the rest of the cohort, Century Pacific Food (CNPF.PS) stands out as the only stock yielding a negative beta value. Specifically, the estimated parameters indicate that a 1% increase in the PSEi leads to a 0.029% decrease in Century Pacific's return. This inverse dynamic suggests a defensive, counter-cyclical characteristic inherent to the food producer, even though the relationship itself ultimately fails to achieve statistical significance ($p = 0.539$).
 
 ---
 
 # PART 2: Fitted Values and Residuals
 
----
-
 ## Question 1 (5 pts)
 
-> Using the regression dataframe that you used in Part 1, create columns where you compute the fitted values of the 5 stocks that you analyzed.
+> Compute the fitted values of the 5 stocks that you analyzed.
 
 $$\hat{R}_{i,t} = \hat{\beta}_0 + \hat{\beta}_1 \cdot R_{m,t}$$
 
 ```{r p2q1-fitted}
 reg_data_wide <- reg_data_wide |>
   mutate(
-    BPI_Fitted   = fitted(regression_results[["BPI.PS"]]),
-    CNPF_Fitted  = fitted(regression_results[["CNPF.PS"]]),
-    MER_Fitted   = fitted(regression_results[["MER.PS"]]),
-    ABS_Fitted   = fitted(regression_results[["ABS.PS"]]),
-    TEL_Fitted   = fitted(regression_results[["TEL.PS"]])
+    BPI_Fitted  = fitted(regression_results[["BPI.PS"]]),
+    CNPF_Fitted = fitted(regression_results[["CNPF.PS"]]),
+    MER_Fitted  = fitted(regression_results[["MER.PS"]]),
+    ABS_Fitted  = fitted(regression_results[["ABS.PS"]]),
+    TEL_Fitted  = fitted(regression_results[["TEL.PS"]])
   )
-
-cat("FITTED VALUES ADDED\n")
-cat("New columns:", grep("Fitted", colnames(reg_data_wide), value = TRUE), "\n\n")
 ```
-
----
 
 ## Question 2 (5 pts)
 
-> Still in the same dataframe, compute the residuals for each stock.
+> Compute the residuals for each stock.
 
 $$\hat{u}_{i,t} = R_{i,t} - \hat{R}_{i,t}$$
 
 ```{r p2q2-residuals}
 reg_data_wide <- reg_data_wide |>
   mutate(
-    BPI_Residual   = BPI.PS   - BPI_Fitted,
-    CNPF_Residual  = CNPF.PS  - CNPF_Fitted,
-    MER_Residual   = MER.PS   - MER_Fitted,
-    ABS_Residual   = ABS.PS   - ABS_Fitted,
-    TEL_Residual   = TEL.PS   - TEL_Fitted
+    BPI_Residual  = BPI.PS  - BPI_Fitted,
+    CNPF_Residual = CNPF.PS - CNPF_Fitted,
+    MER_Residual  = MER.PS  - MER_Fitted,
+    ABS_Residual  = ABS.PS  - ABS_Fitted,
+    TEL_Residual  = TEL.PS  - TEL_Fitted
   )
-
-cat("RESIDUALS ADDED\n")
-cat("New columns:", grep("Residual", colnames(reg_data_wide), value = TRUE), "\n\n")
 ```
-
----
 
 ## Question 3 (3 pts)
 
@@ -280,56 +211,26 @@ cat("New columns:", grep("Residual", colnames(reg_data_wide), value = TRUE), "\n
 ```{r p2q3-sum-residuals}
 residual_sums <- reg_data_wide |>
   summarise(
-    BPI_Sum   = sum(BPI_Residual,   na.rm = TRUE),
-    CNPF_Sum  = sum(CNPF_Residual,  na.rm = TRUE),
-    MER_Sum   = sum(MER_Residual,   na.rm = TRUE),
-    ABS_Sum   = sum(ABS_Residual,   na.rm = TRUE),
-    TEL_Sum   = sum(TEL_Residual,   na.rm = TRUE)
+    BPI_Sum  = sum(BPI_Residual, na.rm = TRUE),
+    CNPF_Sum = sum(CNPF_Residual, na.rm = TRUE),
+    MER_Sum  = sum(MER_Residual, na.rm = TRUE),
+    ABS_Sum  = sum(ABS_Residual, na.rm = TRUE),
+    TEL_Sum  = sum(TEL_Residual, na.rm = TRUE)
   )
 
-cat("SUM OF RESIDUALS\n")
-knitr::kable(residual_sums,
-             col.names = c("BPI", "CNPF", "MER", "ABS", "TEL"),
-             digits = 6,
-             booktabs = TRUE,
-             caption = "Sum of Residuals by Stock")
-cat("\n")
-
-for (ric_name in c("BPI", "CNPF", "MER", "ABS", "TEL")) {
-  col_name <- paste0(ric_name, "_Sum")
-  sum_val <- residual_sums[[col_name]]
-  cat(ric_name, ": ", sprintf("%.6f", sum_val), "\n", sep = "")
-}
-cat("\n")
+knitr::kable(t(residual_sums), col.names = c("Sum of Residuals"), 
+             digits = 14, caption = "Sum of Residuals by Stock")
 ```
 
-The sum of residuals for every stock is close to zero as a result of their respective residuals cancelling out.
+**Observation:** The sum of residuals for every stock is practically zero (e.g., $-0.00000000000007$). This is a fundamental mathematical property of Ordinary Least Squares (OLS) regression when an intercept ($\beta_0$) is included. The positive and negative errors perfectly cancel each other out, leaving only a microscopic remainder due to the computer's floating-point precision limits.
 
----
+
 
 # Data Export
 
-```{r export, include=FALSE}
+```{r export}
 output_csv <- "H3_Group4_Regression_Output.csv"
 write.csv(reg_data_wide, file = output_csv, row.names = FALSE)
-cat("CSV EXPORTED\n")
-cat("File:", output_csv, "\n")
-cat("Dimensions:", nrow(reg_data_wide), "rows x", ncol(reg_data_wide), "cols\n")
-cat("Columns:", paste(colnames(reg_data_wide), collapse = ", "), "\n\n")
 ```
 
-```
-Date, PSEi_Return, BPI.PS, MER.PS, TEL.PS, CNPF.PS, ABS.PS,
-BPI_Fitted, CNPF_Fitted, MER_Fitted, ABS_Fitted, TEL_Fitted,
-BPI_Residual, CNPF_Residual, MER_Residual, ABS_Residual, TEL_Residual
-```
-
----
-
-# Summary of Submitted Files
-
-| # | File | Description |
-|---|------|-------------|
-| 1 | `H3_Group4_Regression_Output.csv` | Final dataframe (727 rows × 17 cols) |
-| 2 | `H3_Analysis.R` | Standalone R analysis script |
-| 3 | `H3.pdf` | This document — PDF with answers |
+The final dataframe has been successfully exported to `H3_Group4_Regression_Output.csv` containing **`r nrow(reg_data_wide)` rows** and **`r ncol(reg_data_wide)` columns** (Date, PSEi_Return, 5 stock returns, 5 fitted values, 5 residuals).

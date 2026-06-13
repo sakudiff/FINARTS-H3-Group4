@@ -9,9 +9,9 @@ library(tidyr)
 library(readxl)
 library(broom)
 
-company_returns <- read_excel("data/Company_Returns.xlsx")
-psei_return    <- read_excel("data/PSEi_Return.xlsx")
-company_info   <- read_excel("data/Company Name.xlsx")
+company_returns <- read_excel("data/raw/Company_Returns.xlsx")
+psei_return    <- read_excel("data/raw/PSEi_Return.xlsx")
+company_info   <- read_excel("data/raw/Company Name.xlsx")
 
 selected_rics <- c("BPI.PS", "CNPF.PS", "MER.PS", "ABS.PS", "TEL.PS")
 
@@ -114,8 +114,8 @@ for (ric in selected_rics) {
   cat("Company Name:", stock_names[[ric]], "\n")
   cat("Sector:", stock_sectors[[ric]], "\n")
   cat("Estimated parameters:\n")
-  cat("B0:", sprintf("%.6f%s", b0_est, b0_sig), "\n")
-  cat("B1:", sprintf("%.6f%s", b1_est, b1_sig), "\n")
+  cat("B0:", sprintf("%.6f", b0_est), b0_sig, "\n")
+  cat("B1:", sprintf("%.6f", b1_est), b1_sig, "\n")
   cat("R-squared:", sprintf("%.4f", r_squared), "\n")
   cat("Observations:", n_obs, "\n\n")
 }
@@ -154,14 +154,7 @@ residual_sums <- reg_data_wide |>
   )
 
 cat("SUM OF RESIDUALS\n")
-print(residual_sums, row.names = FALSE)
-cat("\n")
-
-for (ric_name in c("BPI", "CNPF", "MER", "ABS", "TEL")) {
-  col_name <- paste0(ric_name, "_Sum")
-  sum_val <- residual_sums[[col_name]]
-  cat(ric_name, ": ", sprintf("%.6f", sum_val), "\n", sep = "")
-}
+print(t(residual_sums))
 cat("\n")
 
 output_csv <- "H3_Group4_Regression_Output.csv"
@@ -171,9 +164,3 @@ cat("File:", output_csv, "\n")
 cat("Dimensions:", nrow(reg_data_wide), "rows x", ncol(reg_data_wide), "cols\n")
 cat("Columns:", paste(colnames(reg_data_wide), collapse = ", "), "\n\n")
 
-cat("DETAILED MODEL SUMMARIES\n\n")
-for (ric in selected_rics) {
-  cat("\n", ric, "\n")
-  print(summary(regression_results[[ric]]))
-  cat("\n")
-}
