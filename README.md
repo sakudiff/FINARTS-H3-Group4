@@ -2,21 +2,21 @@
 
 **Group 4:**
 
-- Cuenca, Raphael
-- Galedo, Enrique Lorenzo
-- Go, Keira
-- Opiana, Aimee Lorynne A.
-- Patajo, Juliana
-- Sison, Aaron Joshua E.
+-   Cuenca, Raphael
+-   Galedo, Enrique Lorenzo
+-   Go, Keira
+-   Opiana, Aimee Lorynne A.
+-   Patajo, Juliana
+-   Sison, Aaron Joshua E.
 
 ------------------------------------------------------------------------
 
 ## How to Navigate This GitHub Page
 
-**Note for Groupmates:** If you haven't used GitHub much before, don't worry! It's essentially just a secure cloud folder where we collaborate on our code. 
+**Note for Groupmates:** If you haven't used GitHub much before, don't worry! It's essentially just a secure cloud folder where we collaborate on our code.
 
-- You can download all these files to your laptop by clicking the green **"<> Code"** button near the top right and selecting **"Download ZIP"**. 
-- The `H3.qmd` file is just a fancy `.Rmd` (RMarkdown) file, exactly like the ones we used back in our **FINLYTS** course. You can open and run it in RStudio just like any normal script.
+-   You can download all these files to your laptop by clicking the green **"\<\> Code"** button near the top right and selecting **"Download ZIP"**.
+-   The `H3.qmd` file is just a fancy `.Rmd` (RMarkdown) file, exactly like the ones we used back in our **FINLYTS** course. You can open and run it in RStudio just like any normal script.
 
 ## How the Data is Loaded
 
@@ -57,3 +57,32 @@ We pick 5 stocks from 5 sectors and compare their betas to see which are more de
 | TEL.PS  | PLDT                           | Telecommunications |
 
 ------------------------------------------------------------------------
+
+## Advanced: Contributing via Terminal (CLI)
+
+**Note for Groupmates:** If you want to go beyond the "Download ZIP" method and actually collaborate on this project like a developer, you can use the Terminal (Mac) or Command Prompt/Git Bash (Windows).
+
+### 1. Cloning the Repository
+To pull a live copy of the code onto your machine, open your Terminal and run:
+```bash
+git clone https://github.com/sakudiff/FINARTS-H3-Group4.git
+cd FINARTS-H3-Group4
+```
+
+### 2. Making Changes
+Once you have the folder open, you can edit the `.qmd` or `.R` files in RStudio. When you are happy with your changes, save the files.
+
+### 3. Committing and Pushing Changes
+To send your local changes back to this GitHub repository so everyone else can see them, run these three commands in your terminal:
+
+```bash
+# 1. Stage your changes (tells Git which files you want to update)
+git add .
+
+# 2. Commit your changes (saves a snapshot with a descriptive message)
+git commit -m "update: added my analysis to question 3"
+
+# 3. Push to GitHub (uploads the changes to the cloud)
+git push
+```
+*(Make sure to always run `git pull` before starting new work to avoid conflicts with your groupmates!)*
