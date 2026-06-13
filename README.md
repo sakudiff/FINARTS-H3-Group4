@@ -1,6 +1,7 @@
 # FINARTS HW 3 — Market Model Regression
 
 **Group 4:**
+
 - Cuenca, Raphael
 - Galedo, Enrique Lorenzo
 - Go, Keira
@@ -13,14 +14,15 @@
 ## How to Navigate This GitHub Page
 
 **Note for Groupmates:** If you haven't used GitHub much before, don't worry! It's essentially just a secure cloud folder where we collaborate on our code. 
+
 - You can download all these files to your laptop by clicking the green **"<> Code"** button near the top right and selecting **"Download ZIP"**. 
 - The `H3.qmd` file is just a fancy `.Rmd` (RMarkdown) file, exactly like the ones we used back in our **FINLYTS** course. You can open and run it in RStudio just like any normal script.
 
 ## How the Data is Loaded
 
-**Note for Groupmates:** In our usual finance classes, we normally import data by clicking the "Import Dataset" button in the RStudio GUI. For this project, we automated that step! 
+**Note for Groupmates:** In our usual finance classes, we normally import data by clicking the "Import Dataset" button in the RStudio GUI. For this project, we automated that step!
 
-All the `.xlsx` datasets provided by our professor are saved inside the `data/raw/` folder. Because of this, you **do not** need to manually click "Import Dataset". As long as you open the R project file, the `H3_Analysis.R` script and the `H3.qmd` document will use the `read_excel()` function to automatically pull the data straight from that folder. 
+All the `.xlsx` datasets provided by our professor are saved inside the `data/raw/` folder. Because of this, you **do not** need to manually click "Import Dataset". As long as you open the R project file, the `H3_Analysis.R` script and the `H3.qmd` document will use the `read_excel()` function to automatically pull the data straight from that folder.
 
 ## Files
 
