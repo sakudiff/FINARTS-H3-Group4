@@ -4,9 +4,11 @@
 
 ------------------------------------------------------------------------
 
-## Data Provenance
+## How the Data is Loaded
 
-**Note on Data Retrieval:** In compliance with the assignment instructions, we did not programmatically import or fetch new data via external financial APIs (e.g., Bloomberg, Refinitiv). We exclusively read and analyzed the static `.xlsx` datasets that were directly provided by the professor. These files are securely stored in the `data/raw/` folder within this repository and are tracked by Git to ensure reproducibility.
+**Note for Groupmates:** In our usual finance classes, we normally import data by clicking the "Import Dataset" button in the RStudio GUI. For this project, we automated that step! 
+
+All the `.xlsx` datasets provided by our professor are saved inside the `data/raw/` folder. Because of this, you **do not** need to manually click "Import Dataset". As long as you open the R project file, the `H3_Analysis.R` script and the `H3.qmd` document will use the `read_excel()` function to automatically pull the data straight from that folder. 
 
 ## Files
 
