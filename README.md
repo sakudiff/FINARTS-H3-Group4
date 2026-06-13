@@ -58,7 +58,7 @@ We pick 5 stocks from 5 sectors and compare their betas to see which are more de
 
 ------------------------------------------------------------------------
 
-## Advanced: Contributing via Terminal (CLI)
+## Advanced: Contributing via Branch/PR Workflow
 
 **Note for Groupmates:** If you want to go beyond the "Download ZIP" method and actually collaborate on this project like a developer, you can use the Terminal (Mac) or Command Prompt/Git Bash (Windows).
 
@@ -69,20 +69,47 @@ git clone https://github.com/sakudiff/FINARTS-H3-Group4.git
 cd FINARTS-H3-Group4
 ```
 
-### 2. Making Changes
-Once you have the folder open, you can edit the `.qmd` or `.R` files in RStudio. When you are happy with your changes, save the files.
+### 2. Creating a Branch
+Never make changes directly on the `main` branch! Always create your own branch first to keep the main project safe.
+```bash
+# Create and switch to a new branch (e.g., named after your task)
+git checkout -b feature/my-analysis
+```
+*(Tip: You can always check which branch you are currently viewing by running `git branch`.)*
 
-### 3. Committing and Pushing Changes
-To send your local changes back to this GitHub repository so everyone else can see them, run these three commands in your terminal:
+### 3. Making Changes & Rendering the PDF
+Open the folder in RStudio and edit the `H3.qmd` or `H3_Analysis.R` files. 
+
+**🚨 CRITICAL NOTE:** Your text/code changes will **NOT** automatically show up in the `H3.pdf` file! You must re-render the document in RStudio (by clicking the "Render" button on the top panel) *before* you commit your files. If you don't render it, the PDF will just show the old version.
+
+### 4. Committing and Opening a Pull Request (PR)
+Instead of pushing directly, we use **Pull Requests (PRs)**. A PR is basically a staging area where you ask the group to review your code before it officially gets merged into the final `main` document.
+
+When you are ready to upload your changes, run these commands:
 
 ```bash
 # 1. Stage your changes (tells Git which files you want to update)
 git add .
 
-# 2. Commit your changes (saves a snapshot with a descriptive message)
-git commit -m "update: added my analysis to question 3"
+# 2. Commit your changes (saves a local snapshot with a message)
+git commit -m "update: added my analysis for question 3"
 
-# 3. Push to GitHub (uploads the changes to the cloud)
-git push
+# 3. Pull the latest main updates (rebasing prevents messy history!)
+git pull --rebase origin main
+
+# 4. Push your branch to GitHub
+git push -u origin feature/my-analysis
 ```
-*(Make sure to always run `git pull` before starting new work to avoid conflicts with your groupmates!)*
+
+### 5. Dealing with Conflicts
+If someone else edited the exact same line of code as you while you were working, step #3 (`git pull --rebase`) will pause and warn you about a **Merge Conflict**. 
+To fix this:
+1. Open the conflicting file in your editor. You will see both versions of the text.
+2. Delete the version you don't want and save the file.
+3. Tell Git you fixed it by running:
+```bash
+git add .
+git rebase --continue
+```
+
+Once your branch is successfully pushed, go to the GitHub website. You'll see a big green button that says **"Compare & pull request"**. Click it, and the group can review your work!
