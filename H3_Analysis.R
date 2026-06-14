@@ -9,10 +9,8 @@ library(tidyr)
 library(readxl)
 library(broom)
 
-# ==============================================================================
-# PART 1: Select 5 stocks from 5 different sectors. 
-# Run a regression of the returns of each stock against the market returns
-# ==============================================================================
+# Part 1: Select 5 stocks from 5 different sectors.
+# Run a regression of the returns of each stock against the market returns.
 
 company_returns <- read_excel("data/raw/Company_Returns.xlsx")
 psei_return    <- read_excel("data/raw/PSEi_Return.xlsx")
@@ -51,11 +49,8 @@ cat("Rows:", nrow(reg_data_long), "\n")
 cat("Date range:", format(min(reg_data_long$Date), "%Y-%m-%d"),
     "to", format(max(reg_data_long$Date), "%Y-%m-%d"), "\n\n")
 
-# ------------------------------------------------------------------------------
-# PART 1, Question 1: 
-# Create a dataframe for your regressions. 
+# Part 1, Question 1: Create a dataframe for your regressions.
 # It must contain the 5 stock returns, PSEi return, and date.
-# ------------------------------------------------------------------------------
 
 reg_data_wide <- reg_data_long |>
   select(Date, RIC, Return, PSEi_Return) |>
@@ -105,10 +100,7 @@ regression_results <- list()
 cat("REGRESSION RESULTS\n")
 cat("Model: R_i = B0 + B1 * R_m + u\n\n")
 
-# ------------------------------------------------------------------------------
-# PART 1, Question 2: 
-# Run the regressions and report your estimated parameters.
-# ------------------------------------------------------------------------------
+# Part 1, Question 2: Run the regressions and report your estimated parameters.
 
 for (ric in selected_rics) {
   stock_data <- reg_data_long |> filter(RIC == ric)
@@ -136,22 +128,14 @@ for (ric in selected_rics) {
   cat("Observations:", n_obs, "\n\n")
 }
 
-# ------------------------------------------------------------------------------
-# PART 1, Question 3: 
-# Discuss your findings. Discuss the results for each stock, and compare
+# Part 1, Question 3: Discuss your findings. Discuss the results for each stock, and compare
 # the estimated parameters for each of the stocks.
-# -> NOTE: The full discussion and analysis is written in the H3.pdf document.
-# ------------------------------------------------------------------------------
+# Note: The full discussion and analysis is written in the H3.pdf document.
 
-# ==============================================================================
-# PART 2: Compute the fitted values and residuals.
-# ==============================================================================
+# Part 2: Compute the fitted values and residuals.
 
-# ------------------------------------------------------------------------------
-# PART 2, Question 1: 
-# Using the regression dataframe that you used in Part 1, create columns
+# Part 2, Question 1: Using the regression dataframe that you used in Part 1, create columns
 # where you compute the fitted values of the 5 stocks that you analyzed.
-# ------------------------------------------------------------------------------
 
 reg_data_wide <- reg_data_wide |>
   mutate(
@@ -165,10 +149,7 @@ reg_data_wide <- reg_data_wide |>
 cat("FITTED VALUES ADDED\n")
 cat("New columns:", grep("Fitted", colnames(reg_data_wide), value = TRUE), "\n\n")
 
-# ------------------------------------------------------------------------------
-# PART 2, Question 2: 
-# Still in the same dataframe, compute the residuals for each stock.
-# ------------------------------------------------------------------------------
+# Part 2, Question 2: Still in the same dataframe, compute the residuals for each stock.
 
 reg_data_wide <- reg_data_wide |>
   mutate(
@@ -182,12 +163,9 @@ reg_data_wide <- reg_data_wide |>
 cat("RESIDUALS ADDED\n")
 cat("New columns:", grep("Residual", colnames(reg_data_wide), value = TRUE), "\n\n")
 
-# ------------------------------------------------------------------------------
-# PART 2, Question 3: 
-# What did you notice about the sum of the residuals for each stock?
-# -> NOTE: The discussion on the residuals summing to approximately zero
-#          is written in the H3.pdf document.
-# ------------------------------------------------------------------------------
+# Part 2, Question 3: What did you notice about the sum of the residuals for each stock?
+# Note: The discussion on the residuals summing to approximately zero
+# is written in the H3.pdf document.
 
 residual_sums <- reg_data_wide |>
   summarise(
@@ -202,10 +180,7 @@ cat("SUM OF RESIDUALS\n")
 print(t(residual_sums))
 cat("\n")
 
-# ==============================================================================
-# SUBMISSION: 
-# File 1. Using the write.csv function, export the final dataframe.
-# ==============================================================================
+# Submission: File 1. Using the write.csv function, export the final dataframe.
 
 output_csv <- "H3_Group4_Regression_Output.csv"
 write.csv(reg_data_wide, file = output_csv, row.names = FALSE)
