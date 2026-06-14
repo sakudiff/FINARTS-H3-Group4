@@ -2,12 +2,12 @@
 
 **Group 4:**
 
--   Cuenca, Raphael
--   Galedo, Enrique Lorenzo
--   Go, Keira
--   Opiana, Aimee Lorynne A.
--   Patajo, Juliana
--   Sison, Aaron Joshua E.
+- Cuenca, Raphael
+- Galedo, Enrique Lorenzo
+- Go, Keira
+- Opiana, Aimee Lorynne A.
+- Patajo, Juliana
+- Sison, Aaron Joshua E.
 
 ------------------------------------------------------------------------
 
@@ -15,8 +15,8 @@
 
 **Note for Groupmates:** If you haven't used GitHub much before, don't worry! It's essentially just a secure cloud folder where we collaborate on our code.
 
--   You can download all these files to your laptop by clicking the green **"\<\> Code"** button near the top right and selecting **"Download ZIP"**.
--   The `H3.qmd` file is just a fancy `.Rmd` (RMarkdown) file, exactly like the ones we used back in our **FINLYTS** course. You can open and run it in RStudio just like any normal script.
+- You can download all these files to your laptop by clicking the green **"\<\> Code"** button near the top right and selecting **"Download ZIP"**.
+- The `H3.qmd` file is just a fancy `.Rmd` (RMarkdown) file, exactly like the ones we used back in our **FINLYTS** course. You can open and run it in RStudio just like any normal script.
 
 ## How the Data is Loaded
 
@@ -40,21 +40,21 @@ All the `.xlsx` datasets provided by our professor are saved inside the `data/ra
 
 $$R_i = \beta_0 + \beta_1 R_m + u$$
 
--   $R_i$ = daily return of stock $i$
--   $R_m$ = daily return of the PSEi
--   $\beta_1$ = stock sensitivity to the market (covariance over variance)
--   $\beta_0$ = return not explained by the market
--   $u$ = residual (idiosyncratic noise)
+- $R_i$ = daily return of stock $i$
+- $R_m$ = daily return of the PSEi
+- $\beta_1$ = stock sensitivity to the market (covariance over variance)
+- $\beta_0$ = return not explained by the market
+- $u$ = residual (idiosyncratic noise)
 
 We pick 5 stocks from 5 sectors and compare their betas to see which are more defensive vs. cyclical at the daily level.
 
-| RIC     | Company                        | Sector             |
+| RIC | Company | Sector |
 |---------|--------------------------------|--------------------|
-| BPI.PS  | Bank of the Philippine Islands | Banks              |
-| CNPF.PS | Century Pacific Food           | Food Producers     |
-| MER.PS  | Manila Electric (Meralco)      | Electricity        |
-| ABS.PS  | ABS-CBN                        | Media              |
-| TEL.PS  | PLDT                           | Telecommunications |
+| BPI.PS | Bank of the Philippine Islands | Banks |
+| CNPF.PS | Century Pacific Food | Food Producers |
+| MER.PS | Manila Electric (Meralco) | Electricity |
+| ABS.PS | ABS-CBN | Media |
+| TEL.PS | PLDT | Telecommunications |
 
 ------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ git checkout -b feature/my-analysis
 
 Open the folder in RStudio and edit the `H3.qmd` or `H3_Analysis.R` files.
 
-**🚨 CRITICAL NOTE:** Your text/code changes will **NOT** automatically show up in the `H3.pdf` file! You must re-render the document in RStudio (by clicking the "Render" button on the top panel) *before* you commit your files. If you don't render it, the PDF will just show the old version.
+** CRITICAL NOTE:** Your text/code changes will **NOT** automatically show up in the `H3.pdf` file! You must re-render the document in RStudio (by clicking the "Render" button on the top panel) *before* you commit your files. If you don't render it, the PDF will just show the old version.
 
 ### 4. Committing and Opening a Pull Request (PR)
 
