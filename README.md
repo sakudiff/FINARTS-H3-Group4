@@ -63,31 +63,38 @@ We pick 5 stocks from 5 sectors and compare their betas to see which are more de
 **Note for Groupmates:** If you want to go beyond the "Download ZIP" method and actually collaborate on this project like a developer, you can use the Terminal (Mac) or Command Prompt/Git Bash (Windows).
 
 ### 1. Cloning the Repository
+
 To pull a live copy of the code onto your machine, open your Terminal and run:
-```bash
+
+``` bash
 git clone https://github.com/sakudiff/FINARTS-H3-Group4.git
 cd FINARTS-H3-Group4
 ```
 
 ### 2. Creating a Branch
+
 Never make changes directly on the `main` branch! Always create your own branch first to keep the main project safe.
-```bash
+
+``` bash
 # Create and switch to a new branch (e.g., named after your task)
 git checkout -b feature/my-analysis
 ```
+
 *(Tip: You can always check which branch you are currently viewing by running `git branch`.)*
 
 ### 3. Making Changes & Rendering the PDF
-Open the folder in RStudio and edit the `H3.qmd` or `H3_Analysis.R` files. 
+
+Open the folder in RStudio and edit the `H3.qmd` or `H3_Analysis.R` files.
 
 **🚨 CRITICAL NOTE:** Your text/code changes will **NOT** automatically show up in the `H3.pdf` file! You must re-render the document in RStudio (by clicking the "Render" button on the top panel) *before* you commit your files. If you don't render it, the PDF will just show the old version.
 
 ### 4. Committing and Opening a Pull Request (PR)
+
 Instead of pushing directly, we use **Pull Requests (PRs)**. A PR is basically a staging area where you ask the group to review your code before it officially gets merged into the final `main` document.
 
 When you are ready to upload your changes, run these commands:
 
-```bash
+``` bash
 # 1. Stage your changes (tells Git which files you want to update)
 git add .
 
@@ -102,12 +109,10 @@ git push -u origin feature/my-analysis
 ```
 
 ### 5. Dealing with Conflicts
-If someone else edited the exact same line of code as you while you were working, step #3 (`git pull --rebase`) will pause and warn you about a **Merge Conflict**. 
-To fix this:
-1. Open the conflicting file in your editor. You will see both versions of the text.
-2. Delete the version you don't want and save the file.
-3. Tell Git you fixed it by running:
-```bash
+
+If someone else edited the exact same line of code as you while you were working, step #3 (`git pull --rebase`) will pause and warn you about a **Merge Conflict**. To fix this: 1. Open the conflicting file in your editor. You will see both versions of the text. 2. Delete the version you don't want and save the file. 3. Tell Git you fixed it by running:
+
+``` bash
 git add .
 git rebase --continue
 ```
