@@ -1,5 +1,5 @@
 # Market Model Regression: R_i = B0 + B1 * R_m + u
-# FINARTS HW 3 - Group 4 - Sison, Aaron Joshua E.
+# FINARTS HW 3 - Group 4 - Cuenca, Raphael; Galedo, Enrique Lorenzo; Go, Keira; Opiana, Aimee Lorynne A.; Patajo, Juliana; Sison, Aaron Joshua E.
 
 RANDOM_SEED <- 42L
 set.seed(RANDOM_SEED)
